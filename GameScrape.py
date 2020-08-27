@@ -16,7 +16,25 @@ def choose_word():
     end_index = data.find('<div id="random_word_definition">') - 16
     word = data[start_index:end_index]
     # print(word)
+
     return word
+
+def word_def():
+    user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+
+    url = "https://randomword.com"
+    headers = {'User-Agent': user_agent, }
+
+    request = urllib.request.Request(url, None, headers)
+    response = urllib.request.urlopen(request)
+    data = str(response.read())
+
+    start_index_def = data.find('<div id="random_word_definition">') + len('<div id="random_word_definition">')
+    end_index_def = data.find('<div id="next_random_word" style="margin-bottom:20px">') - 30
+    word_def = data[start_index_def:end_index_def]
+
+    return word_def
+
 
 
 num_attempts = 6
@@ -55,6 +73,7 @@ def game(board, word):
     user_attempts = 0
     previous_guesses = []
     guessed = False
+    word_definition = word_def()
     while user_attempts <= num_attempts and guessed == False:
         # current state of game
         print(display_hangman(num_attempts - user_attempts))
@@ -90,9 +109,11 @@ def game(board, word):
 
     if guessed:
         print("You win! The word was {0}".format(word))
+        print("The definition of {0} is {1}!".format(word, word_definition))
 
     else:
         print("You lose. The word was {0}".format(word))
+        print("The definition of {0} is '{1}'!".format(word, word_definition))
 
     # Play again prompt
     play_again()
